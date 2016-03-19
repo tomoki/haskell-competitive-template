@@ -15,7 +15,7 @@ import System.FilePath.Posix (takeExtension, replaceExtension, joinPath)
 
 rstrip :: String -> String
 rstrip = reverse . dropWhile Char.isSpace . reverse
-execMain :: IO.FilePath -> IO.FilePath -> IO Bool
+execMain :: IO.FilePath -> IO.FilePath -> IO (String, String)
 execMain inf exf = do
   input    <- IO.openFile inf IO.ReadMode
   expf     <- IO.openFile exf IO.ReadMode
@@ -25,14 +25,16 @@ execMain inf exf = do
   -- FIXME: this is strange, but Haskell require me to close file to write file contents
   -- IO.hFlush does not work.
   IO.hClose output
-  output   <- IO.openFile op IO.ReadMode
-  expected <- IO.hGetContents expf
-  outs     <- IO.hGetContents output
-  let !success = (rstrip expected) == (rstrip outs)
-  IO.hClose input
-  IO.hClose output
-  IO.hClose expf
-  return success
+  -- FIXME: I don't know, but just !ret does not work.
+  !output   <- IO.openFile op IO.ReadMode
+  !expected <- IO.hGetContents expf
+  !outs     <- IO.hGetContents output
+  let !ret = ((rstrip expected), (rstrip outs))
+  -- ignore newlines.
+  let !_ = IO.hClose input
+  let !_ = IO.hClose output
+  let !_ = IO.hClose expf
+  return ret
 
 -- IO [FilePath]
 getTestCaseForMain :: IO.FilePath -> IO [(IO.FilePath,IO.FilePath)]
@@ -49,12 +51,12 @@ mainSpec testcases =
   describe "main" $ do
     forM_ testcases $ \(input, expected) ->
       it (input ++ " => " ++ expected) $ do
-        (execMain input expected) `shouldReturn` True
+        (expected, output) <- (execMain input expected)
+        output `shouldBe` expected
 
 doMainSpec :: IO ()
 doMainSpec = do
   testcases <- getTestCaseForMain "cases"
-  putStrLn $ show $ length testcases
   hspec $ mainSpec testcases
 
 main :: IO ()

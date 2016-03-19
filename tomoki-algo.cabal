@@ -2,28 +2,25 @@ name:                tomoki-algo
 version:             0.1.0.0
 synopsis:            Initial project template from stack
 description:         Please see README.md
-homepage:            http://github.com/name/project
+-- homepage:            http://github.com/name/project
 license:             BSD3
-license-file:        LICENSE
 author:              Tomoki Imai
 maintainer:          tomo832@gmail.com
--- copyright:
 category:            Algorithm
 build-type:          Simple
--- extra-source-files:
 cabal-version:       >=1.10
 
 executable main
   hs-source-dirs:      src
-  main-is:             Main.hs
+  main-is:             Startup.hs
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N -Wall
-  build-depends:       base, mtl, containers
+  build-depends:       base, mtl, containers, bytestring
   default-language:    Haskell2010
 
 test-suite main-test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test, src
   main-is:             Spec.hs
-  build-depends:       base, mtl, containers, hspec
+  build-depends:       base, mtl, containers, bytestring, unix, directory, filepath, hspec, HUnit
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   default-language:    Haskell2010

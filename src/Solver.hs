@@ -37,8 +37,7 @@ readInts x = map readInt . ByteString.words <$> ByteString.hGetLine x
 solve :: IO.Handle -> IO.Handle -> IO ()
 solve cin cout =
   do
-    [n] <- getInts
-    putStrLn $ show $ (n * n)
+    return ()
   where
     -- shadowing stdio.
     putChar     = IO.hPutChar     cout
